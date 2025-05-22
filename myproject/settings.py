@@ -206,6 +206,7 @@ TWILIO_VERIFY_SERVICE_SID = os.getenv("TWILIO_VERIFY_SERVICE_SID")
 
 
 # Email settings
+
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
