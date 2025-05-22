@@ -150,8 +150,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STRIPE_WEBHOOK_SECRET = "whsec_efa34fa48199021ca67941b771dd6460e8e7bbeac2c2432749881a008c7832f6"
+DEFAULT_AUTO_FIELD = os.getenv("DEFAULT_AUTO_FIELD", "django.db.models.BigAutoField")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 AUTH_USER_MODEL = 'myapp.User'
 
@@ -194,29 +194,21 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 # Add these to the environment or settings (Not recommended for production)
-SOCIAL_AUTH_GOOGLE_CLIENT_ID = "132660533723-tok3vf0f2h5sk9rmss0ifrfl7r4id2bb.apps.googleusercontent.com"
-SOCIAL_AUTH_GOOGLE_SECRET = "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"
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
+SOCIAL_AUTH_GOOGLE_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_SECRET")
 
 
 
-
-# TWILIO_ACCOUNT_SID = "AC91e34ebe8ede01c65abecfa67645ba5c"
-# TWILIO_AUTH_TOKEN = "20465c0d91dcdea7bc93c32864e013d1"
-# TWILIO_PHONE_NUMBER = "(856) 741-9131"
-
-
-
-
-TWILIO_ACCOUNT_SID = "AC91e34ebe8ede01c65abecfa67645ba5c"
-TWILIO_AUTH_TOKEN = " 20465c0d91dcdea7bc93c32864e013d1"
-TWILIO_PHONE_NUMBER = "(856) 741-9131"
-TWILIO_VERIFY_SERVICE_SID = "VA9d5659189270f6d12a7067fc90eb37fe"
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+TWILIO_VERIFY_SERVICE_SID = os.getenv("TWILIO_VERIFY_SERVICE_SID")
 
 
 # Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'projectpeaq2@gmail.com'.strip()
-EMAIL_HOST_PASSWORD = 'pfdm ieek uipw asrt'.strip()
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER") 
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
