@@ -1,0 +1,10 @@
+python
+django
+mysql
+mysqlclient
+stripe
+twilio
+toastr
+jQuery
+base64
+uuid

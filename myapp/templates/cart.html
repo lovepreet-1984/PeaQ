@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+   
+</head>
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f7fa; /* Light background */
+    color: #333; /* Dark text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.cart-container {
+    width: 50%;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+h2, h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    transition: transform 0.3s ease;
+}
+
+.cart-item:hover {
+    transform: scale(1.02);
+}
+
+.product-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.cart-details {
+    flex: 1;
+}
+
+p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.remove-btn, .checkout-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    font-weight: bold;
+}
+
+.remove-btn {
+    background: #ff4d4d; /* High contrast red */
+    color: white;
+}
+
+.remove-btn:hover {
+    background: #d93636;
+}
+
+.checkout-btn {
+    background: #28a745;
+    color: white;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.checkout-btn:hover {
+    background: #218838;
+}
+
+.cart-summary {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-link:focus, .remove-btn:focus, .checkout-btn:focus {
+    outline: 2px solid #ff6f00;
+    outline-offset: 2px;
+}
+
+</style>
+<body>
+    <div class="cart-container">
+        <h2>Shopping Cart</h2>
+        
+        {% for item in data %}
+        <div class="cart-item">
+            <img src="{{ item.product.image.url }}" alt="Product Image" class="product-img">
+            <div class="cart-details">
+                <h3>{{ item.product.name }}</h3>
+                <p>Quantity: {{ item.quantity }}</p>
+                <p>Total: ₹{{ item.total_amount }}</p>
+                <a href="{% url 'remove_cart' item.id %}">Remove</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="cart-summary">
+            <h3>Cart Summary</h3>
+            <p>Total Amount: ₹{{ price }}</p>
+            <button class="checkout-btn" aria-label="Proceed to checkout">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Toastr CSS & JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    function addToCart(productId, userId) {
+        $.ajax({
+            url: "/add_to_cart/" + productId + "?user=" + userId,  
+            type: "GET",
+            success: function(response) {
+                if (response.status === "success") {
+                    toastr.success(response.message);
+                } else if (response.status === "warning") {
+                    toastr.warning(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function() {
+                toastr.error("Something went wrong. Please try again.");
+            }
+        });
+    }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+

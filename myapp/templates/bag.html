@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .cart-container {
+            width: 60%;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cart-item:hover {
+            transform: scale(1.02);
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        .product-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cart-details {
+            flex: 1;
+        }
+
+        .cart-details h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #222;
+        }
+
+        .cart-details p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .remove-btn {
+            background: #ff4d4d;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .remove-btn:hover {
+            background: #d93636;
+        }
+
+        .cart-summary {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+        }
+
+        .checkout-btn {
+            background: #28a745;
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .checkout-btn:hover {
+            background: #218838;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-btn.warning {
+                background: #28a745;
+                color: white;
+                width: 100%;
+                padding: 14px;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 15px;
+                transition: background 0.3s ease-in-out;
+                animation: fadeIn 0.3s ease-in-out;
+            }
+            
+          
+
+        .btn-btn.warning:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h2>Shopping Cart</h2>
+
+        {% for data in data %}
+        <div class="cart-item" id="item-{{ data.Products.id }}">
+            <img src="{{ data.image }}" alt="Product Image" class="product-img">
+            <div class="cart-details">
+                <h3>{{ data.name }}</h3>
+                <p>Quantity: <span id="quantity-{{ data.Products.id }}">{{ data.quantity }}</span></p>
+                <p>Size: <span id="size-{{ data.Products.id }}">{{ data.size }}</span></p>
+                <p>Total: ₹<span id="total-{{ data.Products.id }}">{{ data.total_amount }}</span></p>
+                
+                <button class="remove-btn" onclick="removeItem('{{ data.id }}', '{{ data.total_amount }}')">Remove</button>
+
+
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="cart-summary">
+            <h3>Cart Summary</h3>
+            <p>Total Amount: ₹<span id="cart-total">{{ price}}</span></p>
+           <script src="https://js.stripe.com/v3/"></script>
+
+<!-- Checkout Button -->
+{% if address %}
+  <button class="checkout-btn" id="payButton">Proceed to Checkout</button>
+{% else %}
+  <p>Please add a shipping address before proceeding to checkout.</p>
+{% endif %}
+
+
+<a href="/add_address/?user=user.id">
+<button class="btn-btn warning" id="addressButton">Add Address</button>
+</a>
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const payButton = document.getElementById("payButton");
+
+        payButton.addEventListener("click", async function() {
+            try {
+                let cartTotalElement = document.getElementById("cart-total");
+                if (!cartTotalElement) {
+                    throw new Error("Cart total element not found");
+                }
+
+                let cartTotal = cartTotalElement.innerText.trim();
+                cartTotal = parseFloat(cartTotal.replace(/[^0-9.]/g, "")); 
+
+                const response = await fetch(`/create-checkout-session/?user={{ user.id }}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ cart_total: cartTotal })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to create checkout session");
+                }
+
+                const data = await response.json();
+
+                if (!data.id) {
+                    throw new Error("Invalid session ID received");
+                }
+
+                const stripe = Stripe("pk_test_51R10aqBSTAAEIUsJeWyFcBE8c4fPrWaLT2Y63arQO8g3N0JRVIHjFNyG0FVJVEUYfwjTU3QOUuYSeqlV7izsb9dZ00hZxs4EJk");
+                stripe.redirectToCheckout({ sessionId: data.id });
+            } catch (error) {
+                console.error("Checkout Error:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    });
+</script>
+        </div>
+    </div>
+
+    <!-- Toastr & jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        function removeItem(cartId, productPrice) {
+            $.ajax({
+                url: "/remove_cart/" + cartId,  
+                type: "GET",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#item-" + cartId).remove();  
+                        updateTotalAmount(productPrice);  
+                        toastr.success(response.message);
+                        location.reload(); 
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Something went wrong. Please try again.");
+                }
+            });
+        }
+
+        function updateTotalAmount(productPrice) {
+            let currentTotal = parseFloat(document.getElementById("cart-total").innerText);
+            let newTotal = currentTotal - parseFloat(productPrice);
+            document.getElementById("cart-total").innerText = newTotal.toFixed(2);
+            
+            if (newTotal <= 0) {
+                document.getElementById("cart-total").innerText = "0";
+            }
+        }
+
+        function checkout() {
+            toastr.info("Redirecting to checkout...");
+            setTimeout(() => {
+                window.location.href = "/checkout";
+            }, 2000);
+        }
+
+       
+    </script>
+
+</body>
+</html>

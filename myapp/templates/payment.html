@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h2>Checkout</h2>
+    <button id="payButton">Pay Now</button>
+
+    <script>
+        document.getElementById("payButton").addEventListener("click", async function() {
+            const response = await fetch("/create-checkout-session/");
+            const data = await response.json();
+
+            const stripe = Stripe("your-publishable-key"); // Replace with your Stripe public key
+            stripe.redirectToCheckout({ sessionId: data.sessionId });
+        });
+    </script>
+</body>
+</html>

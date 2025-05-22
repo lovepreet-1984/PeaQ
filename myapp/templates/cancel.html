@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Cancelled</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #FF0000;
+        }
+        p {
+            color: #555;
+        }
+    </style>
+    <script>
+        
+        setTimeout(function() {
+            window.location.href = "/home/?user={{ user.id }}";
+        }, 10000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Cancelled</h2>
+        <p>Your payment was not completed. Try again.</p>
+    </div>
+</body>
+</html>

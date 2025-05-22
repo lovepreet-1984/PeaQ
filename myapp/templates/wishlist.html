@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wishlist-container {
+            width: 50%;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .wishlist-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: transform 0.3s ease;
+        }
+
+        .wishlist-item:hover {
+            transform: scale(1.02);
+        }
+
+        .product-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .wishlist-details {
+            flex: 1;
+        }
+
+        p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .remove-btn, .move-to-cart-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        .remove-btn {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background: #d93636;
+            transform: scale(1.05);
+        }
+
+        .move-to-cart-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .move-to-cart-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+    <div class="wishlist-container">
+        <h2>My Wishlist</h2>
+        <section>
+            {% if wishlist_items %}
+                <ul id="wishlist">
+                    {% for item in wishlist_items %}
+                        <li class="wishlist-item" id="wishlist-item-{{ item.id }}">
+                            <img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="product-img">
+                            <div class="wishlist-details">
+                                <h3>{{ item.product.name }}</h3>
+                                <p>{{ item.product.description }}</p>
+                                <p>Price: ₹{{ item.product.price }}</p>
+                                <form class="remove-form" data-id="{{ item.id }}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="button" class="remove-btn">Remove</button>
+                                </form>
+                                <form class="move-to-cart-form" data-id="{{ item.id }}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="button" class="move-to-cart-btn">Move to Cart</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h3>Your wishlist is empty.</h3>
+            {% endif %}
+        </section>
+    </div>
+
+    
+        <script>
+            $(document).ready(function () {
+                
+                $('.remove-btn').click(function () {
+                    const itemId = $(this).closest('.remove-form').data('id');
+                    const csrfToken = $(this).siblings('input[name="csrfmiddlewaretoken"]').val();
+        
+                    $.ajax({
+                        url: `{% url 'remove_from_wishlist' 0 %}`.replace('0', itemId),
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': csrfToken },
+                        success: function (response) {
+                            if (response.status === "success") {
+                                toastr.success(response.message);
+                                $(`#wishlist-item-${itemId}`).remove(); 
+                            }
+                        },
+                        error: function (xhr) {
+                            toastr.error('An error occurred while removing the item.'); 
+                        }
+                    });
+                });
+        
+               
+                $('.move-to-cart-btn').click(function () {
+                    const itemId = $(this).closest('.move-to-cart-form').data('id');
+                    const csrfToken = $(this).siblings('input[name="csrfmiddlewaretoken"]').val();
+        
+                    $.ajax({
+                        url: `{% url 'move_to_cart' 0 %}`.replace('0', itemId),
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': csrfToken },
+                        success: function (response) {
+                            if (response.status === "success") {
+                                toastr.success(response.message); 
+                                $(`#wishlist-item-${itemId}`).remove(); 
+                            }
+                        },
+                        error: function (xhr) {
+                            toastr.error('An error occurred while moving the item to the cart.'); 
+                        }
+                    });
+                });
+            });
+        </script>
+</body>
+</html>

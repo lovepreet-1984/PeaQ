@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(210, 180, 140, 0.2) 0,
+                rgba(210, 180, 140, 0.2) 200px,
+                transparent 200px,
+                transparent 400px
+            );
+            background-size: 400px 400px;
+            color: rgb(0, 0, 0);
+        }
+        body::before {
+            content: "Peaq Clothing";
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: rgba(48, 33, 12, 0.2); /* Light brown color with transparency */
+            white-space: nowrap;
+            z-index: -1;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            z-index: 1;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .register-btn {
+            background-color: #007bff;
+            margin-top: 10px;
+        }
+        .register-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div>
+                <label for="username">Email:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form><br>
+
+      
+      
+        <a href="{% url 'register' %}">
+            <button class="register-btn">Register</button>
+        </a>
+    </div>
+</body>
+</html>

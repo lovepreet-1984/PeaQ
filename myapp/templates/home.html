@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeaQ - Home</title>
+    {% load static %}
+   <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    /* Decorative circles */
+    body::before,
+    body::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.2;
+        z-index: 0;
+    }
+    
+    body::before {
+        width: 300px;
+        height: 300px;
+        background: #a2d2ff;
+        top: -100px;
+        left: -100px;
+    }
+    
+    body::after {
+        width: 400px;
+        height: 400px;
+        background: #ffc8dd;
+        bottom: -120px;
+        right: -120px;
+    }
+    
+
+    /* Top Mega Menu */
+    .top-mega-menu {
+        width: 103%;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .top-mega-menu ul {
+        list-style: none;
+        display: flex;
+        gap: 40px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .top-mega-menu li {
+        position: relative;
+    }
+
+    .top-mega-menu a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        padding: 10px 15px;
+        display: block;
+    }
+
+    .top-mega-menu a:hover {
+        color: #007bff;
+    }
+
+    .top-mega-menu .dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        min-width: 200px;
+        z-index: 2;
+    }
+
+    .top-mega-menu .dropdown ul {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .top-mega-menu .dropdown li {
+        width: 100%;
+    }
+
+    .top-mega-menu .dropdown a {
+        padding: 10px 15px;
+        color: #333;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .top-mega-menu .dropdown a:hover {
+        background-color: #f1f1f1;
+        color: #007bff;
+    }
+
+    .top-mega-menu li:hover .dropdown {
+        display: block;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 240px;
+        background-color: #1e1e1e;
+        color: #f0f0f0;
+        height: calc(100vh - 80px);
+        padding: 20px 15px;
+        position: fixed;
+        top: 80px;
+        left: -240px;
+        transition: left 0.3s ease-in-out;
+        z-index: 1000;
+        overflow-y: auto;
+        border-right: 1px solid #444;
+    }
+
+    .sidebar h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #fff;
+        padding-left: 10px;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar ul li {
+        margin-bottom: 5px;
+    }
+
+    .sidebar ul li a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 15px;
+        color: #e0e0e0;
+        background-color: transparent;
+        transition: background 0.25s, color 0.25s;
+        cursor: pointer;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .sidebar ul li.parent > a {
+        font-weight: bold;
+        font-size: 16px;
+        color: #ffcc00;
+        background-color: #2c2c2c;
+    }
+
+    .sidebar ul li.child > a {
+        font-style: italic;
+        font-size: 14px;
+        color: #aaa;
+        background-color: rgba(241, 238, 238, 0);
+        padding-left: 30px;
+    }
+
+    .sidebar ul li .submenu {
+        display: none;
+        padding-left: 10px;
+        flex-direction: column;
+    }
+
+    .sidebar ul li.open > .submenu {
+        display: flex;
+    }
+
+    .sidebar ul li .submenu li a {
+        padding-left: 30px;
+        font-size: 14px;
+        color: #ccc;
+        background-color: #252525;
+    }
+
+    .sidebar ul li > a::after {
+        content: "▸";
+        float: right;
+        font-size: 12px;
+        color: #aaa;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar ul li.open > a::after {
+        transform: rotate(90deg);
+    }
+
+    /* Header */
+    .header {
+        background-color: #fff;
+        padding: 5px 20px;
+        box-shadow: 0 4px 1px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .logo-container {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+    }
+
+    .logo-container img {
+        height: 60px;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 35px;
+    }
+
+    .header-actions img {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        max-width: 300px;
+        position: relative;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .search-bar input[type="text"] {
+        padding: 10px;
+        border: none;
+        width: 100%;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .search-bar input[type="text"]:focus {
+        outline: none;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    /* UPDATED: Only icon visible in search */
+    .search-bar input[type="image"] {
+        position: absolute;
+        right: 10px;
+        height: 24px;
+        width: 24px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        object-fit: contain;
+        cursor: pointer;
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 38px;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        min-width: 160px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 10px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f2f2f2;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 30px 40px;
+        margin-left: 0;
+        transition: margin-left 0.3s ease, padding 0.3s ease;
+    }
+
+    /* Product Container */
+    .product-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Product Card */
+    .product-card {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .product-card h2 {
+        font-size: 18px;
+        color: #333;
+        margin: 10px 0;
+        transition: color 0.3s;
+    }
+
+    .product-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .product-card a:hover h2 {
+        color: #007bff;
+    }
+
+    .product-card p {
+        margin: 5px 0;
+    }
+
+    .product-card p:nth-of-type(1) {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .product-card .description {
+        color: #666;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    /* UPDATED: Login Button */
+    .login-btn {
+        background-color: rgb(255, 255, 255);
+        color: black;
+        padding: 10px 20px;
+        border: 1px solid #007bff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .login-btn:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Go Up Button */
+    #goUpBtn {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 999;
+        font-size: 20px;
+        border: none;
+        outline: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        padding: 12px 16px;
+        border-radius: 50%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    #goUpBtn:hover {
+        background-color: #0056b3;
+        transform: scale(1.1);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .step-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .step-links a, .step-links .current {
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .step-links a {
+        background-color: #f8f9fa;
+        color: #007bff;
+        border: 1px solid #dee2e6;
+    }
+
+    .step-links a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .step-links .current {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border: 1px solid #007bff;
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        padding: 8px 20px;
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        margin: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .breadcrumb a {
+        text-decoration: none;
+        color:rgb(0, 0, 0);
+        font-weight: 500;
+    }
+    
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    
+    .breadcrumb span {
+        color: #6c757d;
+        font-weight: 400;
+    }
+
+</style>
+</head>
+<body>
+
+
+    <div class="sidebar" id="sidebar">
+        <h2>Categories</h2>
+        <ul>
+            <!-- Men Section -->
+            <li class="parent">
+                <a href="#">Men</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'men_shirts' %}">Shirts</a></li>
+                    <li><a href="{% url 'men_polos' %}">Polos</a></li>
+                    <li><a href="{% url 'men_topwear' %}">Topwear</a></li>
+                    <li><a href="{% url 'men_bottomwear' %}">Bottomwear</a></li>
+                </ul>
+            </li>
+
+            <!-- Women Section -->
+            <li class="parent">
+                <a href="#">Women</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'women_topwear' %}">Topwear</a></li>
+                    <li><a href="{% url 'women_bottomwear' %}">Bottomwear</a></li>
+                </ul>
+            </li>
+
+            <!-- Accessories Section -->
+            <li class="parent">
+                <a href="#">Accessories</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'accessories_belts' %}">Belts</a></li>
+                    <li><a href="{% url 'accessories_socks' %}">Socks</a></li>
+                    <li><a href="{% url 'accessories_ties' %}">Ties</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+            <!-- Search Form -->
+            <form method="get" action="{% url 'home' %}" class="search-bar">
+                <input type="text" name="search" id="search" placeholder="Search for clothing..." value="{{ request.GET.search }}" required>
+                <button type="submit">
+                    <img src="{% static 'admin/img/search.png' %}" alt="Search" style="width: 20px; height: 20px;">
+                </button>
+            </form>
+        </div>
+
+        <div class="logo-container">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'admin/img/peaq.png' %}" alt="PeaQ Logo">
+            </a>
+        </div>
+
+
+        <div class="header-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'wishlist' %}?user={{ encoded_user_id }}" class="wishlist-btn">
+                    <img src="{% static 'admin/img/wishlist2.png' %}" alt="Wishlist" title="Wishlist">
+                </a>
+
+                <a href="{% url 'cart_page' %}?user={{ encoded_user_id }}" class="cart-btn">
+                    <img src="{% static 'admin/img/cart 2.png' %}" alt="Cart" title="Cart">
+                </a>
+
+                <a href="{% url 'my_profile' %}?user={{ encoded_user_id }}" class="profile-btn">
+                    <img src="{% static 'admin/img/profile.png' %}" alt="Profile" title="Profile">
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">
+                    <img src="{% static 'admin/img/profile.png' %}" alt="login" title="login">
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    <div class="top-mega-menu">
+        <ul>
+          <li>
+            <a href="#">Men</a>
+            <div class="dropdown">
+              <a href="{% url 'men_shirts' %}">Shirts</a>
+              <a href="{% url 'men_polos' %}">Polos</a>
+              <a href="{% url 'men_topwear' %}">Topwear</a>
+              <a href="{% url 'men_bottomwear' %}">Bottomwear</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Women</a>
+            <div class="dropdown">
+              <a href="{% url 'women_topwear' %}">Topwear</a>
+              <a href="{% url 'women_bottomwear' %}">Bottomwear</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Accessories</a>
+            <div class="dropdown">
+              <a href="{% url 'accessories_belts' %}">Belts</a>
+              <a href="{% url 'accessories_socks' %}">Socks</a>
+              <a href="{% url 'accessories_ties' %}">Ties</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
+
+<!-- Breadcrumbs -->
+<nav class="breadcrumb">
+    <a href="{% url 'home' %}">Home /</a>
+    {% if selected_category %}
+        &gt; <span>{{ selected_category }}</span>
+    {% endif %}
+</nav>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <h2>
+            {% if selected_category %}
+                Showing products for category: {{ selected_category }}
+            {% else %}
+               
+            {% endif %}
+        </h2>
+
+        <div class="product-container" id="product-container">
+            {% for data in page_obj %}
+            <div class="product-card">
+                <img src="{{ data.image }}" alt="Product Image">
+                <a href="/product/{{ data.id }}/?user={{ encoded_user_id }}">
+                    <h2>{{ data.name }}</h2>
+                </a>
+                <p>₹{{ data.price }}</p>
+                <p class="description">{{ data.description }}</p>
+                {% comment %} <p class="details">{{ data.details }}</p> {% endcomment %}
+            </div>
+            {% empty %}
+            <p>No products found for this category.</p>
+            {% endfor %}
+        </div>
+
+
+        <div class="pagination">
+    <div class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if num >= page_obj.number|add:"-4" and num <= page_obj.number|add:"4" %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Last</a>
+        {% endif %}
+    </div>
+</div>
+
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.querySelector('.menu-btn');
+        const mainContent = document.getElementById('main-content');
+        const productContainer = document.getElementById('product-container');
+        const products = [...productContainer.getElementsByClassName('product-card')];
+
+        function toggleSidebar() {
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-250px';
+                mainContent.style.marginLeft = '0';
+            } else {
+                sidebar.style.left = '0px';
+                mainContent.style.marginLeft = '250px';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMenu = menuBtn.contains(event.target);
+
+            if (!isClickInsideSidebar && !isClickOnMenu) {
+                sidebar.style.left = '-250px';
+                mainContent.style.marginLeft = '0';
+            }
+        });
+
+        sidebar.addEventListener('mouseleave', function () {
+            sidebar.style.left = '-250px';
+            mainContent.style.marginLeft = '0';
+        });
+
+        function filterProducts() {
+            const searchQuery = document.getElementById('search').value.toLowerCase();
+
+            if (searchQuery === '') {
+                products.forEach(product => {
+                    product.style.display = 'block';
+                });
+            } else {
+                products.forEach(product => {
+                    const productName = product.querySelector('h2').textContent.toLowerCase();
+                    if (productName.includes(searchQuery)) {
+                        product.style.display = 'block';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+            }
+        }
+    </script>
+
+    <script>
+        let lastScrollTop = 0;
+        const scrollThreshold = 10;
+        const header = document.querySelector('.header');
+    
+        window.addEventListener('scroll', function () {
+            let st = window.pageYOffset || document.documentElement.scrollTop;
+    
+            if (Math.abs(lastScrollTop - st) <= scrollThreshold) return;
+    
+            if (st > lastScrollTop) {
+                // Scrolling down - hide header
+                header.style.top = '-80px';  // Matches header height
+            } else {
+                // Scrolling up - show header
+                header.style.top = '0';
+            }
+    
+            lastScrollTop = st <= 0 ? 0 : st;
+        });
+    </script>
+<!-- Go Up Button -->
+<button id="goUpBtn" title="Go to top">↑</button>
+
+<script>
+    const goUpBtn = document.getElementById("goUpBtn");
+
+    window.onscroll = function () {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            goUpBtn.style.display = "block";
+        } else {
+            goUpBtn.style.display = "none";
+        }
+    };
+
+    goUpBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggles = document.querySelectorAll(".sidebar li > a");
+
+        toggles.forEach(link => {
+            link.addEventListener("click", function (e) {
+                const parentLi = this.parentElement;
+                const submenu = parentLi.querySelector(".submenu");
+
+                if (submenu) {
+                    e.preventDefault(); // prevent default link behavior
+                    parentLi.classList.toggle("open");
+                }
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,163 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PeaQ{% endblock %}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: #ffffff;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .logo-container img {
+            height: 60px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            width: 250px;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions a,
+        .header-actions .profile-btn {
+            background-color: #ffffff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .header-actions a:hover,
+        .header-actions .profile-btn:hover {
+            background-color: #1f78b4;
+        }
+
+        .header-actions .wishlist-btn img,
+        .header-actions .cart-btn img {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s ease;
+        }
+
+        .header-actions .wishlist-btn:hover img,
+        .header-actions .cart-btn:hover img {
+            transform: scale(1.1);
+        }
+
+        .header-actions img {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .header-actions img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 30px 40px;
+            transition: margin-left 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+        <div class="logo-container">
+            <img src="{% static 'admin/img/peaq.png' %}" alt="PeaQ Logo">
+        </div>
+
+        <!-- Search Form -->
+        <form method="get" action="{% url 'home' %}" class="search-bar">
+            <input type="text" name="search" id="search" placeholder="Search for clothing..." value="{{ request.GET.search }}" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="header-actions">
+            <a href="{% url 'wishlist' %}" class="wishlist-btn">
+                <img src="{% static 'admin/img/wishlist.png' %}" alt="Wishlist" title="Wishlist">
+            </a>
+            <a href="{% url 'cart_page' %}" class="cart-btn">
+                <img src="{% static 'admin/img/cart.png' %}" alt="Cart" title="Cart">
+            </a>
+            <a href="{% url 'my_profile' %}?user={{ user.id }}" class="profile-btn">
+                <img src="{% static 'admin/img/profilepic.png' %}" alt="Profile" title="Profile">
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            // Add sidebar toggle functionality if needed
+        }
+    </script>
+</body>
+</html>

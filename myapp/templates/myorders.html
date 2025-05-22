@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(89, 126, 154);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .order-container {
+            margin: 20px auto;
+            max-width: 800px;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .order-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .cart-item {
+            margin-left: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Orders</h1>
+    <div class="order-container">
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-item">
+                    <h3>Transaction ID: {{ order.transaction.transaction_id }}</h3>
+                    <p>Total Amount: ₹{{ order.transaction.total_amount }}</p>
+                    <p>Order Date: {{ order.transaction.created_at|date:"d M Y, h:i A" }}</p>
+                    
+                    <h4>Cart Items:</h4>
+                    {% for item in order.cart_items %}
+                        <div class="cart-item">
+                            <p>Product Name: {{ item.product.name }}</p>
+                            <p>Quantity: {{ item.quantity }}</p>
+                            <p>Total Price: ₹{{ item.total_price }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No orders found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
